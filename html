@@ -1,0 +1,35 @@
+<!-- web-analytics-component.html -->
+<template id="web-analytics-template">
+  <div>
+    <p>Total Visits: <span id="total-visits"></span></p>
+    <p>Unique Hits: <span id="unique-hits"></span></p>
+    <p>Average Duration: <span id="average-duration"></span> seconds</p>
+  </div>
+</template>
+
+<script>
+class WebAnalyticsComponent extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.appendChild(document.querySelector('#web-analytics-template').content.cloneNode(true));
+  }
+
+  connectedCallback() {
+    this.fetchAnalyticsData();
+  }
+
+  async fetchAnalyticsData() {
+    try {
+      const response = await fetch('/api/total-visits?url=https://www.kindservices.co.uk/&start=2023-01-01&end=2023-12-31');
+      const data = await response.json();
+      this.shadowRoot.getElementById('total-visits').textContent = data.totalVisits;
+      // Fetch and display other data in a similar manner.
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+}
+
+customElements.define('web-analytics', WebAnalyticsComponent);
+</script>
